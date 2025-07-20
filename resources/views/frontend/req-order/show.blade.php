@@ -120,14 +120,23 @@
                                             @php
                                                 $fileExtension = pathinfo($file->file_path, PATHINFO_EXTENSION);
                                                 $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                                $fullPath = $file->file_path;
+                                            @endphp
+                                            
+                                            <!-- Debug info -->
+                                            <div class="small text-muted mb-1">File path: {{ $fullPath }}</div>
+                                            
+                                            @php
+                                                // Use the same approach as admin panel
+                                                $adminStylePath = asset('public/k2d/uploads/reqorder/' . basename($file->file_path));
                                             @endphp
                                             
                                             @if($isImage)
-                                                <a href="{{ asset($file->file_path) }}" target="_blank">
-                                                    <img src="{{ asset($file->file_path) }}" alt="Order Item Image" class="img-fluid mb-1" style="max-height: 50px; max-width: 50px; margin-right: 5px;">
+                                                <a href="{{ $adminStylePath }}" target="_blank">
+                                                    <img src="{{ $adminStylePath }}" alt="Order Item Image" class="img-fluid mb-1" style="max-height: 50px; max-width: 50px; margin-right: 5px;">
                                                 </a>
                                             @else
-                                                <a href="{{ asset($file->file_path) }}" target="_blank" class="btn btn-sm btn-secondary mb-1">
+                                                <a href="{{ $adminStylePath }}" target="_blank" class="btn btn-sm btn-secondary mb-1">
                                                     <i class="las la-file-pdf"></i> {{ translate('View File') }}
                                                 </a>
                                             @endif
@@ -178,14 +187,23 @@
                                 @php
                                     $fileExtension = pathinfo($file->file_path, PATHINFO_EXTENSION);
                                     $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                    $fullPath = $file->file_path;
+                                @endphp
+                                
+                                <!-- Debug info -->
+                                <div class="small text-muted mb-1">File path: {{ $fullPath }}</div>
+                                
+                                @php
+                                    // Use the same approach as admin panel
+                                    $adminStylePath = asset('public/k2d/uploads/reqorder/' . basename($file->file_path));
                                 @endphp
                                 
                                 @if($isImage)
-                                    <a href="{{ asset($file->file_path) }}" target="_blank">
-                                        <img src="{{ asset($file->file_path) }}" alt="Order Item Image" class="img-fluid mb-2" style="max-height: 100px; max-width: 100px; margin-right: 5px;">
+                                    <a href="{{ $adminStylePath }}" target="_blank">
+                                        <img src="{{ $adminStylePath }}" alt="Order Item Image" class="img-fluid mb-2" style="max-height: 100px; max-width: 100px; margin-right: 5px;">
                                     </a>
                                 @else
-                                    <a href="{{ asset($file->file_path) }}" target="_blank" class="btn btn-sm btn-secondary mb-2">
+                                    <a href="{{ $adminStylePath }}" target="_blank" class="btn btn-sm btn-secondary mb-2">
                                         <i class="las la-file-pdf"></i> {{ translate('View File') }}
                                     </a>
                                 @endif
