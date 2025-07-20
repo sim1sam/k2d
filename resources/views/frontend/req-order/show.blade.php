@@ -89,13 +89,14 @@
                     <thead class="text-gray fs-12">
                     <tr>
                         <th>#</th>
-                        <th width="30%">{{ translate('Product') }}</th>
+                        <th width="20%">{{ translate('Product') }}</th>
                         <th>{{ translate('Size') }}</th>
                         <th>{{ translate('Quantity') }}</th>
                         <th>{{ translate('Unit Price') }}</th>
                         <th>{{ translate('Total Price') }}</th>
                         <th>{{ translate('Paid Amount') }}</th>
                         <th>{{ translate('Due Amount') }}</th>
+                        <th>{{ translate('Images') }}</th>
                         <th>{{ translate('Status') }}</th>
                         <th>{{ translate('Action') }}</th>
                     </tr>
@@ -112,6 +113,30 @@
                             <td>{{ single_price($itemTotal) }}</td>
                             <td>{{ single_price($item->paid_amount) }}</td>
                             <td>{{ single_price($item->due) }}</td>
+                            <td>
+                                @if($item->files->count() > 0)
+                                    <div class="item-images">
+                                        @foreach($item->files as $file)
+                                            @php
+                                                $fileExtension = pathinfo($file->file_path, PATHINFO_EXTENSION);
+                                                $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                            @endphp
+                                            
+                                            @if($isImage)
+                                                <a href="{{ asset($file->file_path) }}" target="_blank">
+                                                    <img src="{{ asset($file->file_path) }}" alt="Order Item Image" class="img-fluid mb-1" style="max-height: 50px; max-width: 50px; margin-right: 5px;">
+                                                </a>
+                                            @else
+                                                <a href="{{ asset($file->file_path) }}" target="_blank" class="btn btn-sm btn-secondary mb-1">
+                                                    <i class="las la-file-pdf"></i> {{ translate('View File') }}
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted">{{ translate('No files') }}</span>
+                                @endif
+                            </td>
                             <td>{{ ucfirst($item->status) }}</td>
                             <td>
                                 @if($item->due > 0 && $item->pay_status != 'paid')
@@ -145,6 +170,29 @@
                     <p><strong>Total Price:</strong> {{ single_price($item->quantity * $item->price_bdt) }}</p>
                     <p><strong>Paid Amount:</strong> {{ single_price($item->paid_amount) }}</p>
                     <p><strong>Due Amount:</strong> {{ single_price($item->due) }}</p>
+                    
+                    @if($item->files->count() > 0)
+                        <p><strong>{{ translate('Images') }}:</strong></p>
+                        <div class="item-images mb-3">
+                            @foreach($item->files as $file)
+                                @php
+                                    $fileExtension = pathinfo($file->file_path, PATHINFO_EXTENSION);
+                                    $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                @endphp
+                                
+                                @if($isImage)
+                                    <a href="{{ asset($file->file_path) }}" target="_blank">
+                                        <img src="{{ asset($file->file_path) }}" alt="Order Item Image" class="img-fluid mb-2" style="max-height: 100px; max-width: 100px; margin-right: 5px;">
+                                    </a>
+                                @else
+                                    <a href="{{ asset($file->file_path) }}" target="_blank" class="btn btn-sm btn-secondary mb-2">
+                                        <i class="las la-file-pdf"></i> {{ translate('View File') }}
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                    
                     @if($item->due > 0 && $item->pay_status != 'paid')
                         <a href="{{ route('order.payment.form', encrypt($item->id)) }}" class="btn btn-sm btn-primary">
                             {{ translate('Pay Now') }}
@@ -168,4 +216,17 @@
             icon.textContent = icon.textContent === '+' ? '-' : '+';
         }
     </script>
+    
+    <style>
+        .item-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .item-images img:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+    </style>
 @endsection
