@@ -124,8 +124,6 @@
                                             @endphp
                                             
                                             <!-- Debug info -->
-                                            <div class="small text-muted mb-1">File path: {{ $fullPath }}</div>
-                                            
                                             @php
                                                 // Use the same approach as admin panel
                                                 $adminStylePath = asset('public/k2d/uploads/reqorder/' . basename($file->file_path));
@@ -191,8 +189,6 @@
                                 @endphp
                                 
                                 <!-- Debug info -->
-                                <div class="small text-muted mb-1">File path: {{ $fullPath }}</div>
-                                
                                 @php
                                     // Use the same approach as admin panel
                                     $adminStylePath = asset('public/k2d/uploads/reqorder/' . basename($file->file_path));
