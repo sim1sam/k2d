@@ -798,8 +798,7 @@ class AdminReqOrderController extends Controller
         // Ensure the `due` is never negative. If it's negative, keep it at 0
         $reqOrderDue = max($reqOrderDue, 0);  // Ensure the due is never negative
 
-        // Update the ReqOrder's discount and due after applying the total discount
-        $reqOrder->discount = $totalItemDiscount; // Total discount from all items
+        // Update the ReqOrder's due after applying the total discount
         $reqOrder->due = $reqOrderDue; // Updated due amount after discount
         $reqOrder->save();
 
