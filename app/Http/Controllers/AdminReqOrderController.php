@@ -541,7 +541,8 @@ class AdminReqOrderController extends Controller
 
             // Update the related order status
             $order = $orderItem->order; // Get the order associated with the item
-            $order->pay_status = ($order->items->sum('paid_amount') >= $order->total) ? 'paid' : 'partial';
+            $order->due = $order->items->sum('due');
+            $order->pay_status = $order->items->every(function($item) { return $item->due <= 0; }) ? 'paid' : 'partial';
             $order->save();
 
             // Save the payment method (bank_id)
