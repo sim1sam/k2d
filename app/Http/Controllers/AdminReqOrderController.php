@@ -527,7 +527,7 @@ class AdminReqOrderController extends Controller
 
             // Update paid amount and due amount for the item
             $orderItem->paid_amount += $request->amount;
-            $orderItem->due = max(0, $orderItem->total - $orderItem->paid_amount); // Ensure due amount doesn't go negative
+            $orderItem->due = ($orderItem->quantity * $orderItem->price_bdt) - $orderItem->coupon_discount - $orderItem->paid_amount;
 
             // Check if the item is fully paid
             if ($orderItem->paid_amount >= $orderItem->total) {
