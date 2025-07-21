@@ -116,10 +116,14 @@
                                     <h6 class="fw-bold">
                                         {{ $order->paid_amount > 0 ? translate('Due Amount:') : translate('Total Amount:') }}
                                     </h6>
+                                    @php
+                                        $totalAfterDiscount = $order->items->sum(function($item) {
+                                            return ($item->quantity * $item->price_bdt) - $item->coupon_discount;
+                                        });
+                                    @endphp
                                     <p class="fs-16 fw-bold">
-                                        {{ number_format($order->total) }} BDT
+                                        {{ number_format($totalAfterDiscount) }} BDT
                                     </p>
-
                                 </div>
                                 
                             </div>

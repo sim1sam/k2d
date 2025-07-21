@@ -338,15 +338,7 @@ class AdminReqOrderController extends Controller
 
     public function show($id)
     {
-        $order = ReqOrder::with([
-            'customer',
-            'items.vendor',
-            'items.brand',
-            'items.bank', // Now correctly mapped to bank_id
-            'items.shipment',
-            'items.vendor',
-            'items.files'
-        ])->findOrFail($id);
+        $order = ReqOrder::with('items')->findOrFail($id); // Eager load items to get latest data
 
         return view('backend.req_order.show', compact('order'));
     }
