@@ -171,17 +171,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Download Invoice</label>
-                                        <form action="" method="POST" >
-                                            @csrf
-                                            <button type="submit" class="btn btn-soft-info btn-icon btn-circle btn-sm">
-                                                <i class="las la-download mr-2"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                                
 
 
                             </div>
