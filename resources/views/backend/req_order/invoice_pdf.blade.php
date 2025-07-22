@@ -180,11 +180,11 @@
                         </tr>
                         <tr class="border-bottom">
                             <th class="gry-color text-left">{{ translate('Coupon Discount') }}</th>
-                            <td class="currency">BDT {{ number_format($reqorder->discount, 2) }}</td>
+                            <td class="currency">BDT {{ number_format($total_discount ?? 0, 2) }}</td>
                         </tr>
                         <tr>
                             <th class="text-left strong">{{ translate('Grand Total') }}</th>
-                            <td class="currency">BDT {{ number_format($reqorder->total - $reqorder->discount, 2) }}</td>
+                            <td class="currency">BDT {{ number_format($reqorder->total - ($total_discount ?? 0), 2) }}</td>
                         </tr>
                         </tbody>
 

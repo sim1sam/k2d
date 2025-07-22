@@ -721,6 +721,9 @@ class AdminReqOrderController extends Controller
         // Check if the user has permission to access this order
         if (in_array(auth()->user()->user_type, ['admin', 'staff']) || in_array(auth()->id(), [$reqorder->user_id, $reqorder->seller_id])) {
 
+            // Calculate total discount for all items in the order
+            $total_discount = $reqorder->items->sum('coupon_discount');
+
             // If item_id is provided, get the specific item
             if ($item_id) {
                 $orderDetail = $reqorder->items()->findOrFail($item_id);
@@ -742,7 +745,8 @@ class AdminReqOrderController extends Controller
                 'font_family' => $font_family,
                 'direction' => $direction,
                 'text_align' => $text_align,
-                'not_text_align' => $not_text_align
+                'not_text_align' => $not_text_align,
+                'total_discount' => $total_discount
             ])->download('reqorder-' . $reqorder->order_no . '.pdf');
         }
 
