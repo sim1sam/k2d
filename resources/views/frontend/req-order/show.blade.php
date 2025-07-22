@@ -38,7 +38,13 @@
                         </tr>
                         <tr>
                             <td class="w-50 fw-600">{{ translate('Discount') }}:</td>
-                            <td>{{ single_price($reqOrder->discount) }}</td>
+                            <td>
+                                @php
+                                    // Calculate total discount from all items
+                                    $totalDiscount = $reqOrder->items->sum('coupon_discount');
+                                @endphp
+                                {{ single_price($totalDiscount) }}
+                            </td>
                         </tr>
                     </table>
                 </div>
