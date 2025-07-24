@@ -186,82 +186,78 @@
                             <th class="text-left strong">{{ translate('Grand Total') }}</th>
                             <td class="currency">BDT {{ number_format($reqorder->total - ($total_discount ?? 0), 2) }}</td>
                         </tr>
-                        
-                        <!-- Payment Breakdown Section -->
-                        <tr>
-                            <th colspan="2" class="text-left strong" style="padding-top: 15px; padding-bottom: 5px; border-bottom: 2px solid #333;">{{ translate('Payment Breakdown') }}</th>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="padding: 0;">
-                                <table class="text-left small" style="width: 100%; border-collapse: collapse;">
-                                    <thead>
-                                        <tr style="background-color: #f8f8f8;">
-                                            <th style="width: 25%; padding: 8px; border-bottom: 1px solid #ddd;">{{ translate('Date') }}</th>
-                                            <th style="width: 25%; padding: 8px; border-bottom: 1px solid #ddd;">{{ translate('Payment Method') }}</th>
-                                            <th style="width: 25%; padding: 8px; border-bottom: 1px solid #ddd;">{{ translate('Status') }}</th>
-                                            <th style="width: 25%; text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">{{ translate('Amount') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $totalPaid = 0;
-                                            // Get all items with payment information
-                                            $paidItems = $reqorder->items->filter(function($item) {
-                                                return $item->paid_amount > 0;
-                                            });
-                                        @endphp
-                                        
-                                        @if($paidItems->count() > 0)
-                                            @foreach($paidItems as $item)
-                                                <tr>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->updated_at->format('d M Y, h:i A') }}</td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                                                        @php
-                                                            $bankName = 'N/A';
-                                                            if (is_numeric($item->payment_method)) {
-                                                                $bank = \App\Models\Bank::find($item->payment_method);
-                                                                if ($bank) {
-                                                                    $bankName = $bank->name;
-                                                                }
-                                                            } else {
-                                                                $bankName = $item->payment_method;
-                                                            }
-                                                        @endphp
-                                                        {{ $bankName }}
-                                                    </td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->payment_status ?? translate('N/A') }}</td>
-                                                    <td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">BDT {{ number_format($item->paid_amount, 2) }}</td>
-                                                </tr>
-                                                @php $totalPaid += $item->paid_amount; @endphp
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td colspan="4" style="text-align: center; padding: 12px; border-bottom: 1px solid #eee; color: #777;">{{ translate('No payment records found') }}</td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="background-color: #f8f8f8;">
-                                            <th colspan="3" style="text-align: left; padding: 8px; border-top: 2px solid #ddd;">{{ translate('Total Paid') }}</th>
-                                            <td style="text-align: right; padding: 8px; border-top: 2px solid #ddd; font-weight: bold;">BDT {{ number_format($totalPaid, 2) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="3" style="text-align: left; padding: 8px;">{{ translate('Total Discount') }}</th>
-                                            <td style="text-align: right; padding: 8px;">BDT {{ number_format($total_discount ?? 0, 2) }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="3" style="text-align: left; padding: 8px; border-top: 1px solid #ddd; font-weight: bold;">{{ translate('Due Amount') }}</th>
-                                            <td style="text-align: right; padding: 8px; border-top: 1px solid #ddd; font-weight: bold;">BDT {{ number_format($reqorder->due, 2) }}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </td>
-                        </tr>
                         </tbody>
                     </table>
                 </td>
             </tr>
             </tbody>
+        </table>
+    </div>
+    
+    <!-- Payment Breakdown Table - Full Width -->
+    <div style="margin-top: 20px; margin-left: 20px; margin-right: 20px;">
+        <h3 style="font-size: 14px; margin-bottom: 10px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 5px;">{{ translate('Payment Breakdown') }}</h3>
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+            <thead>
+                <tr style="background-color: #f8f8f8;">
+                    <th style="width: 25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">{{ translate('Date') }}</th>
+                    <th style="width: 25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">{{ translate('Payment Method') }}</th>
+                    <th style="width: 25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">{{ translate('Status') }}</th>
+                    <th style="width: 25%; text-align: right; padding: 8px; border-bottom: 1px solid #ddd;">{{ translate('Amount') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $totalPaid = 0;
+                    // Get all items with payment information
+                    $paidItems = $reqorder->items->filter(function($item) {
+                        return $item->paid_amount > 0;
+                    });
+                @endphp
+                
+                @if($paidItems->count() > 0)
+                    @foreach($paidItems as $item)
+                        <tr>
+                            <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->updated_at->format('d M Y, h:i A') }}</td>
+                            <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                                @php
+                                    $bankName = 'N/A';
+                                    if (is_numeric($item->payment_method)) {
+                                        $bank = \App\Models\Bank::find($item->payment_method);
+                                        if ($bank) {
+                                            $bankName = $bank->name;
+                                        }
+                                    } else {
+                                        $bankName = $item->payment_method;
+                                    }
+                                @endphp
+                                {{ $bankName }}
+                            </td>
+                            <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->payment_status ?? translate('N/A') }}</td>
+                            <td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">BDT {{ number_format($item->paid_amount, 2) }}</td>
+                        </tr>
+                        @php $totalPaid += $item->paid_amount; @endphp
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 12px; border-bottom: 1px solid #eee; color: #777;">{{ translate('No payment records found') }}</td>
+                    </tr>
+                @endif
+            </tbody>
+            <tfoot>
+                <tr style="background-color: #f8f8f8;">
+                    <th colspan="3" style="text-align: left; padding: 8px; border-top: 2px solid #ddd;">{{ translate('Total Paid') }}</th>
+                    <td style="text-align: right; padding: 8px; border-top: 2px solid #ddd; font-weight: bold;">BDT {{ number_format($totalPaid, 2) }}</td>
+                </tr>
+                <tr>
+                    <th colspan="3" style="text-align: left; padding: 8px;">{{ translate('Total Discount') }}</th>
+                    <td style="text-align: right; padding: 8px;">BDT {{ number_format($total_discount ?? 0, 2) }}</td>
+                </tr>
+                <tr>
+                    <th colspan="3" style="text-align: left; padding: 8px; border-top: 1px solid #ddd; font-weight: bold;">{{ translate('Due Amount') }}</th>
+                    <td style="text-align: right; padding: 8px; border-top: 1px solid #ddd; font-weight: bold;">BDT {{ number_format(max(0, $reqorder->due), 2) }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
     
