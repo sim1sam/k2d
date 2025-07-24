@@ -215,7 +215,20 @@
                                             @foreach($paidItems as $item)
                                                 <tr>
                                                     <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->updated_at->format('d M Y, h:i A') }}</td>
-                                                    <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->payment_method ?? translate('N/A') }}</td>
+                                                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                                                        @php
+                                                            $bankName = 'N/A';
+                                                            if (is_numeric($item->payment_method)) {
+                                                                $bank = \App\Models\Bank::find($item->payment_method);
+                                                                if ($bank) {
+                                                                    $bankName = $bank->name;
+                                                                }
+                                                            } else {
+                                                                $bankName = $item->payment_method;
+                                                            }
+                                                        @endphp
+                                                        {{ $bankName }}
+                                                    </td>
                                                     <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ $item->payment_status ?? translate('N/A') }}</td>
                                                     <td style="text-align: right; padding: 8px; border-bottom: 1px solid #eee;">BDT {{ number_format($item->paid_amount, 2) }}</td>
                                                 </tr>

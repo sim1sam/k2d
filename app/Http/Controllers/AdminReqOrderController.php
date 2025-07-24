@@ -536,6 +536,9 @@ class AdminReqOrderController extends Controller
                 $orderItem->payment_status = 'partial'; // Update payment status to 'partial' if not fully paid
             }
 
+            // Save the payment method (bank_id)
+            $orderItem->payment_method = $request->payment_method;
+            
             // Save the order item
             $orderItem->save();
 
@@ -544,9 +547,6 @@ class AdminReqOrderController extends Controller
             $order->due = $order->items->sum('due');
             $order->pay_status = $order->items->every(function($item) { return $item->due <= 0; }) ? 'paid' : 'partial';
             $order->save();
-
-            // Save the payment method (bank_id)
-            $orderItem->payment_method = $request->payment_method;
 
             // Process CashIn (incoming payment to the bank)
             $paymentMethod = Bank::findOrFail($request->payment_method); // Find the bank
