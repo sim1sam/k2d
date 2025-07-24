@@ -188,16 +188,119 @@
 
                             <tr>
                                 <th class="text-left strong">{{ translate('Grand Total') }}</th>
-                                <td class="currency">{{ number_format($orderDetail->price_bdt * $orderDetail->quantity-$orderDetail->coupon_discount, 2) }}</td>
+                                <td class="currency">BDT {{ number_format($orderDetail->price_bdt * $orderDetail->quantity - ($orderDetail->coupon_discount ?? 0), 2) }}</td>
                             </tr>
-
-
+                        
+                        <!-- Payment Breakdown Section -->
+                        <tr>
+                            <th colspan="2" class="text-left strong" style="padding-top: 10px; border-bottom: 1px solid #ccc;">{{ translate('Payment Breakdown') }}</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding: 0;">
+                                <table class="text-left small" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 25%;">{{ translate('Date') }}</th>
+                                            <th style="width: 25%;">{{ translate('Payment Method') }}</th>
+                                            <th style="width: 25%;">{{ translate('Status') }}</th>
+                                            <th style="width: 25%; text-align: right;">{{ translate('Amount') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if($orderDetail->paid_amount > 0)
+                                            <tr>
+                                                <td>{{ $orderDetail->updated_at->format('d M Y, h:i A') }}</td>
+                                                <td>{{ $orderDetail->payment_method ?? translate('N/A') }}</td>
+                                                <td>{{ $orderDetail->payment_status ?? translate('N/A') }}</td>
+                                                <td class="text-right">BDT {{ number_format($orderDetail->paid_amount, 2) }}</td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td colspan="4" class="text-center">{{ translate('No payment records found') }}</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="border-top: 1px solid #ccc;">
+                                            <th colspan="3" class="text-left">{{ translate('Total Paid') }}</th>
+                                            <td class="text-right">BDT {{ number_format($orderDetail->paid_amount ?? 0, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-left">{{ translate('Item Discount') }}</th>
+                                            <td class="text-right">BDT {{ number_format($orderDetail->coupon_discount ?? 0, 2) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-left strong">{{ translate('Due Amount') }}</th>
+                                            <td class="text-right strong">BDT {{ number_format($orderDetail->due ?? ($orderDetail->price_bdt * $orderDetail->quantity - ($orderDetail->coupon_discount ?? 0) - ($orderDetail->paid_amount ?? 0)), 2) }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </td>
+                        </tr>
+                        
+                        <!-- Total Amount in Words -->
+                        <tr>
+                            <td colspan="2" style="padding-top: 15px; border-top: 1px dashed #ccc;">
+                                @php
+                                    function convertNumberToWord($num = false)
+                                    {
+                                        $num = str_replace(array(',', ' '), '', trim($num));
+                                        if (!$num) {
+                                            return false;
+                                        }
+                                        
+                                        $num = (int) $num;
+                                        $words = array();
+                                        $list1 = array('', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven',
+                                            'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+                                        );
+                                        $list2 = array('', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred');
+                                        $list3 = array('', 'thousand', 'million', 'billion', 'trillion');
+                                        
+                                        $num_length = strlen($num);
+                                        $levels = (int) (($num_length + 2) / 3);
+                                        $max_length = $levels * 3;
+                                        $num = substr('00' . $num, -$max_length);
+                                        $num_levels = str_split($num, 3);
+                                        
+                                        for ($i = 0; $i < count($num_levels); $i++) {
+                                            $levels--;
+                                            $hundreds = (int) ($num_levels[$i] / 100);
+                                            $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' hundred' . ' ' : '');
+                                            $tens = (int) ($num_levels[$i] % 100);
+                                            $singles = '';
+                                            
+                                            if ($tens < 20) {
+                                                $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '');
+                                            } else {
+                                                $tens = (int) ($tens / 10);
+                                                $tens = ' ' . $list2[$tens] . ' ';
+                                                $singles = (int) ($num_levels[$i] % 10);
+                                                $singles = ' ' . $list1[$singles] . ' ';
+                                            }
+                                            $words[] = $hundreds . $tens . $singles . (($levels && (int) ($num_levels[$i])) ? ' ' . $list3[$levels] . ' ' : '');
+                                        }
+                                        
+                                        $commas = count($words);
+                                        if ($commas > 1) {
+                                            $commas = $commas - 1;
+                                        }
+                                        
+                                        $words = implode(' ', $words);
+                                        $words = preg_replace('/\s+/', ' ', $words);
+                                        return ucwords(trim($words));
+                                    }
+                                    
+                                    $totalAmount = $orderDetail->price_bdt * $orderDetail->quantity - ($orderDetail->coupon_discount ?? 0);
+                                    $amountInWords = convertNumberToWord($totalAmount);
+                                @endphp
+                                <p style="margin: 0; font-weight: bold;">{{ translate('In Words') }}: {{ $amountInWords }} {{ translate('Taka Only') }}</p>
+                            </td>
+                        </tr>
                         </tbody>
-
                     </table>
-
                 </td>
-                </tr>
+            </tr>
             </tbody>
         </table>
     </div>
